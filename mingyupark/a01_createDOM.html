@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+/*
+
+*/
+
+/**/
+</style>
+<script src="http://code.jquery.com/jquery-1.10.2.js">
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+	var h1Obj = document.createElement("h1");				// h1 객체를 생성
+	var title01 = document.createTextNode("안녕하세요 DOM!");	// h1 안에 들어간 label을 관리하는 객체
+	h1Obj.appendChild(title01);								// 최상위 body <-- h1 <-- "문자열"
+	document.body.appendChild(h1Obj);
+});
+</script>
+</head>
+<body>
+
+</body>
+</html>
