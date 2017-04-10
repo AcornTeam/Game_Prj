@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+#myCanvas{
+	background:beige;
+	border:5px solid grey;
+}
+
+
+</style>
+<script src="http://code.jquery.com/jquery-1.10.2.js">
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+	var canvas = document.getElementById("myCanvas");
+	var myGamePiece = canvas.getContext("2d");
+	myGamePiece.fillStyle = "red";
+	myGamePiece.fillRect(300,200,40,40);
+	
+	var enemy01 = canvas.getContext("2d");
+	enemy01.beginPath();
+	enemy01.arc(300,50,20,0,2*Math.PI);
+	enemy01.fillStyle = "blue";
+	enemy01.fill();
+	enemy01.stroke();
+});
+
+
+</script>
+</head>
+<body>
+<canvas id="myCanvas" width="600" height="400"></canvas>
+</body>
+</html>
