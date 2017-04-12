@@ -127,7 +127,7 @@
              if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speedY = 7;}
              if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = -7;}
              if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 7;}
-             if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -7;alert((myGameArea.keys||[]));}
+             if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -7;}
              if (myGameArea.keys && myGameArea.keys[32]) {myBullets = new bullet(myGamePiece.x, myGamePiece.y);}
              for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){
                 if (myGamePiece.crashWith(myGameEnemy[cnt])){
