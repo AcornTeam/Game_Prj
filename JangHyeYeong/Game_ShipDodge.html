@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<!-- http://Nagarry.tistory.com -->
+<!-- Nagarry's Dodge Game -->
+<!-- I used 100% pure HTML5 code not jquery -->
+<!-- This is copyleft. You can use my code -->
+<html>
+<head>
+  <title>NagarryTest</title>
+</head>
+
+<body style="background-color: #000000;margin: 0px;">
+  <canvas id="canvas" width="600" height="600" style="background-color: #ccccff;">
+    Sorry, Your browser doesn't support HTML5 CANVAS
+  </canvas>
+  <div class="controlLayer" id="controlLayer" style="position:absolute;top:20px;left:100px;visibility:hidden;">
+  </div>
+<script>
+	var canvas;
+	var canvasCtx;
+	
+	
+	var canvasBuffer;
+	var bufferCtx;
+	
+	var threadSpeed = 16;     //Gap of Thread
+	var gameLoopThread;  //animation Thread ID
+	var keyPressOn = {};//pressed - true
+	var spaceShipSprit;
+	var timeCheckLevel1 = 0;
+	var timeCheckLevel2 = 0;
+	
+	var playerUnit = {}; //Player Unit Property
+	var enemyBalls;
+	var LoopStatred = false;
+	
+	var startTime;
+	
+	window.addEventListener("load", init, false);
+	
+	function init()
+	{
+	  canvas = document.getElementById("canvas");
+	  canvasCtx = canvas.getContext("2d");
+	  canvasBuffer= document.createElement("canvas");
+	  canvasBuffer.width = canvas.width;
+	  canvasBuffer.height = canvas.height;
+	  bufferCtx = canvasBuffer.getContext("2d");
+	
+	  document.addEventListener("keydown", getKeyDown, false);
+	  document.addEventListener("keyup", getKeyUp, false);
+	  setImage();
+	
+	  var controlPanel = document.getElementById("controlLayer");
+	  controlPanel.style.visibility = "visible";
+	  controlPanel.style.top
+	    = canvas.style.left + "420px";
+	  controlPanel.style.left
+	    = canvas.style.left + "420px";
+	
+	
+	  //Start Message
+	  canvasCtx.fillStyle = "#ffffff";
+	  canvasCtx.strokeStyle = "#ff0000";
+	  canvasCtx.font = "bold 30px _sans";
+	  canvasCtx.textBaseline = "middle";
+	  canvasCtx.textAlign = "center";
+	  canvasCtx.fillText("Enter to Start", canvas.width/2, canvas.height/2);
+	  canvasCtx.strokeText("Enter to Start", canvas.width/2, canvas.height/2);
+	  canvasCtx.font = "bold 14px _sans";
+	  var controlMsg;
+	  if(checkGamepadReady()) controlMsg = "Control : Arrow Key or W/A/S/D";
+	  else controlMsg = "Control : Gamepad or Arrow Key or W/A/S/D";
+	  canvasCtx.fillText(controlMsg, canvas.width/2, canvas.height/2+20);
+	}
+	
+	function startGameLoop()
+	{
+	  playerUnit = {x:canvas.width/2 - 18, y:canvas.height/2 - 18,
+	                width: 36, height: 36, speed:4}; //UserUnit Property
+	  timeCheckLevel1 = 0;
+	  timeCheckLevel2 = 0;
+	  enemyBalls = new Array();
+	  createEnemyBalls(35);
+	
+	  startTime = new Date();
+	  gameLoopThread = setInterval(gameLoop, threadSpeed);
+	  LoopStatred = true;
+	}
+	
+	function createEnemyBalls(iCount)
+	{
+	  for(var i=0; i<iCount; i++)
+	  {
+	    var startX = Math.floor(Math.random() * (canvas.width - 1)) + 1;
+	    var startY = Math.floor(Math.random() * (canvas.height - 1)) + 1;
+	    var startPos = Math.floor(Math.random() * 4);
+	    if(startPos == 1)
+	      startX = 0;
+	    else if(startPos == 2)
+	      startY = 0;
+	    else if(startPos == 3)
+	      startX = canvas.width;
+	    else
+	      startY = canvas.height;
+	
+	    var startAngle = Math.floor(Math.random() * 360);
+	    var startSpeed = Math.floor(Math.random() * (2)) + 2;
+	    var startColor;
+	    if(startSpeed == 2)
+	      startColor = "#000000";
+	    else
+	      startColor = "#aa0000";
+	
+	    var enemy = {x:startX, y:startY, color:startColor,
+	                radius:4, speed:startSpeed, angle:startAngle,radians:Math.PI/180};
+	    enemyBalls.push(enemy);
+	  }
+	}
+	
+	function stopGameLoop()
+	{
+	  clearInterval(gameLoopThread);
+	  LoopStatred = false;
+	}
+	
+	function setImage()
+	{
+	  spaceShipSprit = new Image();
+	  spaceShipSprit.src = "http://cfile9.uf.tistory.com/image/2564F54054D0952830DC26";
+	}
+	
+	/**
+	function getMouseOver(key)
+	{
+	if(key == "RightUp") keyValue = "3938";
+	else if(key == "LeftUp") keyValue = "3738";
+	else if(key == "RightDown") keyValue = "3940";
+	else if(key == "LeftDown") keyValue = "3740";
+	else if(key == "Up") keyValue = "38";
+	else if(key == "Left") keyValue = "37";
+	else if(key == "Right") keyValue = "39";
+	else if(key == "Down") keyValue = "40";
+	keyPressOn[keyValue] = true;
+	}
+	
+	function getMouseOut(key)
+	{
+	if(key == "RightUp") keyValue = "3938";
+	else if(key == "LeftUp") keyValue = "3738";
+	else if(key == "RightDown") keyValue = "3940";
+	else if(key == "LeftDown") keyValue = "3740";
+	else if(key == "Up") keyValue = "38";
+	else if(key == "Left") keyValue = "37";
+	else if(key == "Right") keyValue = "39";
+	else if(key == "Down") keyValue = "40";
+	keyPressOn[keyValue] = false;
+	}
+	
+	function getMouseDown(key)
+	{
+	if(key == "Ent" && !LoopStatred) //enter
+	{
+	    startGameLoop();
+	}
+	}
+	*/
+	
+	function getKeyDown(event)
+	{
+	  var keyValue;
+	  if(event == null)
+	  {
+	    keyValue=window.event.keyCode;
+	    window.event.preventDefault();
+	  }
+	   else
+	  {
+	    keyValue=event.keyCode;
+	    event.preventDefault();
+	  }
+	  if(keyValue == "87") keyValue = "38";       //up
+	  else if(keyValue == "83") keyValue = "40";  //down
+	  else if(keyValue == "65") keyValue = "37";  //left
+	  else if(keyValue == "68") keyValue = "39";  //right
+	  keyPressOn[keyValue] = true;
+	}
+	
+	function getKeyUp(event)
+	{
+	  var keyValue;
+	  if(event == null)
+	  {
+	    keyValue=window.event.keyCode;
+	    window.event.preventDefault();
+	  }
+	  else
+	  {
+	    keyValue=event.keyCode;
+	    event.preventDefault();
+	  }
+	  if(keyValue == "87") keyValue = "38";       //up
+	  else if(keyValue == "83") keyValue = "40";  //down
+	  else if(keyValue == "65") keyValue = "37";  //left
+	  else if(keyValue == "68") keyValue = "39";  //right
+	  keyPressOn[keyValue] = false;
+	
+	  if(keyValue == "13" && !LoopStatred) //enter
+	  {
+	    startGameLoop();
+	  }
+	}
+	
+	function gameLoop()
+	{
+	  calcKeyInnput();
+	  calcEnemy();
+	  checkHitPlayer();
+	  displayAll();
+	}
+	
+	function calcKeyInnput()
+	{
+	  if((keyPressOn["3738"] || keyPressOn["3938"] || keyPressOn["38"]) && playerUnit.y >= -playerUnit.height/4)
+	    playerUnit.y -= playerUnit.speed;  //up
+	  if((keyPressOn["3740"] || keyPressOn["3940"] || keyPressOn["40"]) && playerUnit.y <= canvas.height -playerUnit.height*0.75)
+	    playerUnit.y += playerUnit.speed;  //down
+	  if((keyPressOn["3738"] || keyPressOn["3740"] || keyPressOn["37"]) && playerUnit.x >= -playerUnit.width/4)
+	    playerUnit.x -= playerUnit.speed;  //left
+	  if((keyPressOn["3938"] || keyPressOn["3940"] || keyPressOn["39"]) && playerUnit.x <= canvas.width -playerUnit.width*0.75)
+	    playerUnit.x += playerUnit.speed;  //right
+	}
+	
+	function calcEnemy()
+	{
+	  if(timeCheckLevel1 > 600)
+	  {
+	    createEnemyBalls(2);
+	    timeCheckLevel1 = 0;
+	  }
+	  timeCheckLevel1++;
+	
+	  for(var i=0;i<enemyBalls.length;i++)
+	  {
+	    enemyBalls[i].radians = enemyBalls[i].angle * Math.PI/180;
+	    enemyBalls[i].x += Math.cos(enemyBalls[i].radians) * enemyBalls[i].speed;
+	    enemyBalls[i].y += Math.sin(enemyBalls[i].radians) * enemyBalls[i].speed;
+	
+	    if(enemyBalls[i].x > canvas.width || enemyBalls[i].x < 0)
+	      enemyBalls[i].angle = 180 - enemyBalls[i].angle;
+	    else if(enemyBalls[i].y > canvas.height || enemyBalls[i].y < 0)
+	      enemyBalls[i].angle = 360 - enemyBalls[i].angle;
+	  }
+	}
+	
+	function displayAll()
+	{
+	  bufferCtx.fillStyle = "#ccf";
+	  bufferCtx.fillRect(0, 0, canvas.width, canvas.height);
+	  displayPlayer();
+	  displayEnemy();
+	  displayEnemyCount();
+	
+	  canvasCtx.drawImage(canvasBuffer, 0, 0);
+	  if(!LoopStatred)
+	    showRecord();
+	}
+	
+	function showRecord()
+	{
+	  canvasCtx.fillStyle = "rgba(0, 0, 0, 0.2)";
+	  canvasCtx.fillRect(canvas.width/2 - 109, canvas.height/2 - 17, 218, 34);
+	
+	  canvasCtx.fillStyle = "#ffffff";
+	  canvasCtx.strokeStyle = "#ff0000";
+	  canvasCtx.font = "bold 30px _sans";
+	  canvasCtx.textBaseline = "middle";
+	  canvasCtx.textAlign = "center";
+	  canvasCtx.fillText("Enter to Restart", canvas.width/2, canvas.height/2);
+	  canvasCtx.strokeText("Enter to Restart", canvas.width/2, canvas.height/2);
+	
+	  canvasCtx.fillStyle = "rgba(255, 255, 255, 0.4)";
+	  canvasCtx.fillRect(canvas.width/2 - 109, canvas.height/2 +20, 218, 14);
+	
+	  var stopTime = new Date();
+	  var elapseSeconds = (stopTime.getTime() - startTime.getTime())/1000;
+	  canvasCtx.fillStyle = "#000000";
+	  canvasCtx.font = "bold 12px _sans";
+	  canvasCtx.textBaseline = "top";
+	  canvasCtx.textAlign = "center";
+	  canvasCtx.fillText("Your Record : " + elapseSeconds + " Seconds",
+	                    canvas.width/2, canvas.height/2 +20);
+	}
+	
+	function displayPlayer()
+	{
+	  bufferCtx.drawImage(spaceShipSprit, //Source Image
+	    405, 180, //X, Y Position on spaceShipSprit
+	    playerUnit.width, playerUnit.height,  //Cut Size from spaceShipSprit
+	    playerUnit.x, playerUnit.y, //View Position
+	    playerUnit.width, playerUnit.height //View Size
+	    );
+	
+	  if(checkHitPlayer())
+	    stopGameLoop();
+	}
+	
+	function displayEnemy()
+	{
+	  for(var i=0;i<enemyBalls.length;i++)
+	  {
+	    bufferCtx.fillStyle = enemyBalls[i].color;
+	    bufferCtx.beginPath();
+	    bufferCtx.arc(enemyBalls[i].x, enemyBalls[i].y, enemyBalls[i].radius, 0, Math.PI*2, true);
+	    bufferCtx.closePath();
+	    bufferCtx.fill();
+	  }
+	}
+	
+	function displayEnemyCount()
+	{
+	  bufferCtx.fillStyle = "#000000";
+	  bufferCtx.fillRect(0, canvas.height-15, 40, 15);
+	
+	  bufferCtx.fillStyle = "#eeeeee";
+	  bufferCtx.font = "12px _sans";
+	  bufferCtx.textBaseline = "middle";
+	  bufferCtx.textAlign = "center";
+	  bufferCtx.fillText(enemyBalls.length, 20, canvas.height-6);
+	}
+	
+	//check Player is hited or not
+	function checkHitPlayer()
+	{
+	  var rtnVal = false;
+	  for(var i=0;i<enemyBalls.length;i++)
+	  {
+	    var distanceX = (playerUnit.x +  playerUnit.width/2) - enemyBalls[i].x;
+	    var distanceY = (playerUnit.y +  playerUnit.height/2) - enemyBalls[i].y;
+	    var distance = distanceX*distanceX + distanceY*distanceY;
+	
+	    if(distance <= (enemyBalls[i].radius + (playerUnit.width/2 -5))
+	                    * (enemyBalls[i].radius + (playerUnit.height/2 -5)))
+	    {
+	      rtnVal = true;
+	      break;
+	    }
+	  }
+	
+	  return rtnVal;
+	}
+	
+	function checkGamepadReady() {
+	    return "getGamepads" in navigator;
+	}
+	
+	function gamepadHandler(event, connecting) {
+	  var gamepad = event.gamepad;
+	  // Note:
+	  // gamepad === navigator.getGamepads()[gamepad.index]
+
+	  if (connecting) {
+	    gamepads[gamepad.index] = gamepad;
+	  } else {
+	    delete gamepads[gamepad.index];
+	  }
+	}
+
+	window.addEventListener("gamepadconnected", function(e) { gamepadHandler(e, true); }, false);
+	window.addEventListener("gamepaddisconnected", function(e) { gamepadHandler(e, false); }, false);
+</script>
+</body>
+</html>
