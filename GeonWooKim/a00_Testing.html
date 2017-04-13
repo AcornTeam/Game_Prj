@@ -14,7 +14,7 @@
 <body onload = "startGame()">
     <script>
         var bulletIndex = 0;
-        var myBullets;
+        var myBullets = [];
         var myGamePiece;
         var myGameEnemy = [];
         
@@ -87,6 +87,13 @@
             }           
          }
 
+        function creBullet(){
+            if(bulletIndex % 20 == 0){
+                myBullets[bulletIndex] = new bullet(myGamePiece.x, myGamePiece.y); 
+            }
+            bulletIndex++;      
+        }
+
          function enemy(width, height, color, x, y, type){
             this.type = type;
             this.width = width;
@@ -128,7 +135,10 @@
              if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = -7;}
              if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 7;}
              if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -7;}
-             if (myGameArea.keys && myGameArea.keys[32]) {myBullets = new bullet(myGamePiece.x, myGamePiece.y);}
+             if (myGameArea.keys && myGameArea.keys[32]) 
+             {               
+                creBullet();
+             }
              for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){
                 if (myGamePiece.crashWith(myGameEnemy[cnt])){
 
@@ -155,9 +165,14 @@
                     myGameEnemy[cnt].update();
              }
              try{
-                myBullets.speedY = 7;
-                myBullets.fire();              
-                myBullets.update();  
+                 for(var idx = 0; idx < bulletIndex; idx++){
+                    if(idx%20 == 0){
+                    myBullets[idx].speedY = 7;
+                    myBullets[idx].fire();              
+                    myBullets[idx].update(); 
+                    }
+                 }
+
              }finally{
              }                         
         }
@@ -188,6 +203,7 @@
                 this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
             }
         }
+
 
     </script>
     
