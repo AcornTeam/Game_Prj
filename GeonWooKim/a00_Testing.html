@@ -40,6 +40,9 @@
                 ctx.translate(this.x, this.y);
                 ctx.fillStyle = color;
                 ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+                ctx.fillRect(0, 0, this.width, this.height/2);
+                ctx.fillRect(- 1* this.width, 0, this.width, this.height/2);
+                ctx.fillStyle = "black";
                 ctx.restore();
             }           
             this.newPosY = function(){
