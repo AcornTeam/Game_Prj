@@ -19,12 +19,12 @@ $(document).ready(function(){
 	
 });
 	var myGamePiece;
-	var enemyPiece;
+	var myEnemyPiece;
 
 	function startGame(){
 		myGameArea.start();
 		myGamePiece = new component(30, 30, "red", 300, 200);
-		enemyPiece = new component(20, 20, "royalblue", 300, 50);
+		myEnemyPiece = new component(20, 20, "royalblue", 300, 50);
 	}
 
 	var myGameArea = {
@@ -45,6 +45,9 @@ $(document).ready(function(){
 		},
 		clear:function(){
 			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		},
+		stop:function(){
+			clearInterval(this.interval);
 		}
 	}
 
@@ -64,9 +67,32 @@ $(document).ready(function(){
 			this.x += this.speedX;
 			this.y += this.speedY;
 		}
+		this.crashWith = function(otherobj){
+			var myleft = this.x;
+			var myright = this.x + (this.width);
+			var mytop = this.y;
+			var mybottom = this.y + (this.height);
+			var otherleft = otherobj.x;
+			var otherright = otherobj.x + (otherobj.width);
+			var othertop = otherobj.y;
+			var otherbottom = otherobj.y + (otherobj.height);
+			var crash = true;
+			if((mybottom < othertop) ||
+					(mytop > otherbottom) ||
+					(myright < otherleft) ||
+					(myleft > otherright)){
+				crash = false;
+			}
+			return crash;
+		}
 	}
 
 	function updateGameArea(){
+		if (myGamePiece.crashWith(myEnemyPiece)){
+			myGameArea.stop();
+			ctx.font = "50px Arial";
+			ctx.fillText("GAME OVER", 140, 210);
+		}else{
 		myGameArea.clear();
 		myGamePiece.speedX = 0;
 		myGamePiece.speedY = 0;
@@ -76,7 +102,8 @@ $(document).ready(function(){
 		if(myGameArea.keys && myGameArea.keys[40]){myGamePiece.speedY = 5};
 		myGamePiece.newPos();
 		myGamePiece.update();
-		enemyPiece.update();
+		myEnemyPiece.update();
+		}
 	}
 
 /*	function moveup(){
@@ -104,7 +131,7 @@ $(document).ready(function(){
 </script>
 </head>
 <body><center>
-	
+
 <!--<button onmousedown="moveup()" onmouseup="stopMove()">Up</button><br>
 	<button onmousedown="moveleft()" onmouseup="stopMove()">Left</button>
 	<button onmousedown="movedown()" onmouseup="stopMove()">Down</button>
