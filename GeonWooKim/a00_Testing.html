@@ -130,8 +130,8 @@
              myGamePiece.speedX = 0;
 
               for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){
-              myGameEnemy[cnt].speedY = Math.random(-0.0001,0.0001);
-              myGameEnemy[cnt].speedX = Math.random(-0.0005,0.0005);
+            //   myGameEnemy[cnt].speedY = Math.random(-0.0001,0.0001);
+            //   myGameEnemy[cnt].speedX = Math.random(-0.0005,0.0005);
               }
 
              if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speedY = 7;}
@@ -142,34 +142,36 @@
              {               
                 creBullet();
              }
-             for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){
-                if (myGamePiece.crashWith(myGameEnemy[cnt])){
+            //  for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){
+            //     if (myGamePiece.crashWith(myGameEnemy[cnt])){
 
-                    if(myGamePiece.y + (myGamePiece.height) >= myGameEnemy[cnt].y){ 
-                        myGamePiece.y = myGameEnemy[cnt].y - myGamePiece.height;
+            //         if(myGamePiece.y + (myGamePiece.height) >= myGameEnemy[cnt].y){ 
+            //             myGamePiece.y = myGameEnemy[cnt].y - myGamePiece.height;
 
-                    }else if(myGamePiece.y <= myGameEnemy[cnt].y + (myGameEnemy[cnt].height)){
-                        myGamePiece.y = myGameEnemy[cnt].y + (myGameEnemy[cnt].height);
+            //         }else if(myGamePiece.y <= myGameEnemy[cnt].y + (myGameEnemy[cnt].height)){
+            //             myGamePiece.y = myGameEnemy[cnt].y + (myGameEnemy[cnt].height);
 
-                    }if(myGamePiece.x + (myGamePiece.width) >= myGameEnemy[cnt].x){
-                        myGamePiece.x = myGameEnemy[cnt].x - myGamePiece.width;
+            //         }if(myGamePiece.x + (myGamePiece.width) >= myGameEnemy[cnt].x){
+            //             myGamePiece.x = myGameEnemy[cnt].x - myGamePiece.width;
 
-                    }else if(myGamePiece.x <= myGameEnemy[cnt].x + (myGameEnemy[cnt].width)){
-                        myGamePiece.x = myGameEnemy[cnt].x + (myGameEnemy[cnt].width);
-                    }
-                }
-             }
+            //         }else if(myGamePiece.x <= myGameEnemy[cnt].x + (myGameEnemy[cnt].width)){
+            //             myGamePiece.x = myGameEnemy[cnt].x + (myGameEnemy[cnt].width);
+            //         }
+            //     }
+            //  }
              myGamePiece.newPosY();
              myGamePiece.newPosX();
             //  myGameEnemy.newPosY();
             //  myGameEnemy.newPosX();           
              myGamePiece.update();
              for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){
+                 if(myGameEnemy[cnt] != null){
                     myGameEnemy[cnt].update();
+                 }               
              }
              try{
                  for(var idx = 0; idx < bulletIndex; idx++){
-                    if(idx%20 == 0){
+                    if(idx%20 == 0 && myBullets[idx] != null){
                     myBullets[idx].speedY = 7;
                     myBullets[idx].fire();              
                     myBullets[idx].update(); 
@@ -177,7 +179,20 @@
                  }
 
              }finally{
-             }                         
+             }             
+             for(var idx = 0; idx < myGameEnemy.length; idx++){
+                for(var cnt = 0; cnt < myBullets.length; cnt++){
+                    if(myGameEnemy[idx] != null && myBullets[cnt] != null){
+                    if(cnt%20 == 0 && Math.sqrt(Math.pow(myBullets[cnt].x - myGameEnemy[idx].x, 2))
+                         + Math.pow(myBullets[cnt].y - myGameEnemy[idx].y, 2) < 50)
+                    {
+                        myGameEnemy[idx] = null;
+                        myBullets[cnt] = null;
+
+                    }
+                    }
+                }
+            }  
         }
 
         var myGameArea = {
