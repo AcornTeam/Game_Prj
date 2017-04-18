@@ -16,9 +16,10 @@
    	    var enemyCnt=0; // 적이 사라진 수를 카운트함 _JHY
    	    var nullEnemy= []; //사라진 적의 인덱스를 저장할 배열 _JHY
         var bulletIndex = 0;
-   	    var enemybulletIndex =0;// 적 총알 배열 index _YYJ
+   	    var enemybulletIndex =0;
+        var enemymyBullets = 0;
         var myBullets = [];
-        var enemymyBullets=[];// 적 총알 객체 _YYJ
+        var enemymyBullets=[];
         var myGamePiece;
         var myGameEnemy = [];
         
@@ -93,7 +94,6 @@
                 ctx.restore();
             }           
          }
-         // 수정  적 총알생성자 새로 생성 _YYJ 
          function enemybullet(x, y, type){
              this.type = type;
              this.width = 2;
@@ -195,15 +195,14 @@
              myGamePiece.update();
              for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){
                  if(myGameEnemy[cnt] != null){
-                	 
-                 // 적 총알에 객체 생성 , 적의 위치 
-                     if(bulletIndex % 20 == 0  ){
-                    	 enemymyBullets[bulletIndex] = new enemybullet(myGameEnemy[cnt].x, myGameEnemy[cnt].y); 
-                     }
-                     bulletIndex++; 
+                	
                     myGameEnemy[cnt].update();
                     
                  }            
+                 if(enemybulletIndex % 20 == 0  ){
+                 	enemymyBullets[enemybulletIndex] = new enemybullet(myGameEnemy.x, myGameEnemy.y); 
+                 }
+                 enemybulletIndex++;      
              }
             
              try{
@@ -213,7 +212,18 @@
                     myBullets[idx].fire();              
                     myBullets[idx].update(); 
                     }
-                   
+                 }
+                 // 수정 
+                 for(var idxz = 0; idxz < enemybulletIndex; idxz++){
+                     if(idx%20 == 0 && enemymyBullets[idxz] != null){
+                    	 enemymyBullets[idxz].speedY = 7;
+                    	 enemymyBullets[idxz].fire();              
+                    	 enemymyBullets[idxz].update(); 
+                     }
+                  }
+            
+                 
+
              }finally{
              }   
              
