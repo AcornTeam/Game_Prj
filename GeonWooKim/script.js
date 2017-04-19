@@ -1,36 +1,17 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>HTML5 Game Example</title>
-    <style>
-        canvas {
-            border : 1px solid #d3d3d3;
-            background-color : #f1f1f1;
-        }
-    </style>
-</head>
-<body onload = "startGame()">
-    <script>
-   	    var enemyCnt=0; // 적이 사라진 수를 카운트함 _JHY
-   	    var nullEnemy= []; //사라진 적의 인덱스를 저장할 배열 _JHY
-        var bulletIndex = 0;
-   	    var enemybulletIndex =0;
-        var enemymyBullets = 0;
-        var myBullets = [];
-        var enemymyBullets=[];
-        var myGamePiece;
-        var myGameEnemy = [];
-        
-        function startGame() {
-            myGamePiece = new component(30, 30, "red", 40, 40);
-            for(var cnt = 0 ; cnt < 10; cnt++){
-                myGameEnemy[cnt] = new enemy(30 ,30, "black", 225 + 31*cnt, 225);
-            }        
-            myGameArea.start();      
-        }
-        
+
+var bulletIndex = 0;
+var myBullets = [];
+var myGamePiece;
+var myGameEnemy = [];
+
+function startGame() {
+    myGamePiece = new component(30, 30, "red", 40, 40);
+    for(var cnt = 0 ; cnt < 10; cnt++){
+        myGameEnemy[cnt] = new enemy(30 ,30, "black", 225 + 31*cnt, 225);
+    }        
+    myGameArea.start();      
+}
+
         function component(width, height, color, x, y, type){
             this.type = type;
             this.width = width;
@@ -94,36 +75,13 @@
                 ctx.restore();
             }           
          }
-         function enemybullet(x, y, type){
-             this.type = type;
-             this.width = 2;
-             this.height = 5;
-             this.speedY = 0;
-             this.speedX = 0;
-             this.x = x;
-             this.y = y;
-             this.speedY = 0;
-             this.fire = function(y){
-                 this.y += this.speedY;
-             }             
-             this.update = function(){
-                 ctx = myGameArea.context;
-                 ctx.save();
-                 ctx.translate(this.x, this.y);
-                 ctx.fillStyle = "black";
-                 ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
-                 ctx.restore();
-             }           
-          }
-		//총알 생성
+
         function creBullet(){
-            if(bulletIndex % 20 == 0  ){
+            if(bulletIndex % 20 == 0){
                 myBullets[bulletIndex] = new bullet(myGamePiece.x, myGamePiece.y); 
             }
             bulletIndex++;      
         }
-		
-
 
          function enemy(width, height, color, x, y, type){
             this.type = type;
@@ -152,15 +110,16 @@
          }
 
          function updateGameArea(){
-	
+
              myGameArea.clear();
-             
              myGamePiece.speedY = 0;
              myGamePiece.speedX = 0;
 
               for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){
-            //   myGameEnemy[cnt].speedY = Math.random(-0.0001,0.0001);
-            //   myGameEnemy[cnt].speedX = Math.random(-0.0005,0.0005);
+                  if(myGameEnemy[cnt] != null){
+                    myGameEnemy[cnt].speedY = Math.random(-0.0001,0.0001);
+                    myGameEnemy[cnt].speedX = Math.random(-0.0005,0.0005);
+                  }
               }
 
              if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speedY = 7;}
@@ -171,7 +130,7 @@
              {               
                 creBullet();
              }
-            //  for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){////
+            //  for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){
             //     if (myGamePiece.crashWith(myGameEnemy[cnt])){
 
             //         if(myGamePiece.y + (myGamePiece.height) >= myGameEnemy[cnt].y){ 
@@ -195,16 +154,9 @@
              myGamePiece.update();
              for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){
                  if(myGameEnemy[cnt] != null){
-                	
                     myGameEnemy[cnt].update();
-                    
-                 }            
-                 if(enemybulletIndex % 20 == 0  ){
-                 	enemymyBullets[enemybulletIndex] = new enemybullet(myGameEnemy.x, myGameEnemy.y); 
-                 }
-                 enemybulletIndex++;      
+                 }               
              }
-            
              try{
                  for(var idx = 0; idx < bulletIndex; idx++){
                     if(idx%20 == 0 && myBullets[idx] != null){
@@ -213,72 +165,22 @@
                     myBullets[idx].update(); 
                     }
                  }
-                 // 수정 
-                 for(var idxz = 0; idxz < enemybulletIndex; idxz++){
-                     if(idx%20 == 0 && enemymyBullets[idxz] != null){
-                    	 enemymyBullets[idxz].speedY = 7;
-                    	 enemymyBullets[idxz].fire();              
-                    	 enemymyBullets[idxz].update(); 
-                     }
-                  }
-            
-                 
 
              }finally{
-             }   
-             
-    
-             var color=["red","orange","Yellow","blue","black","white","tomato","pink"];
-             var enemyPosX=parseInt(Math.random()*400)+30;
-             var enemyPosY=parseInt(Math.random()*225)+30;
-             var choice=parseInt(Math.random()*8);
-             
-             // 적이 총에 맞았을 때 
+             }             
              for(var idx = 0; idx < myGameEnemy.length; idx++){
                 for(var cnt = 0; cnt < myBullets.length; cnt++){
-                	
                     if(myGameEnemy[idx] != null && myBullets[cnt] != null){
-	                    if(cnt%20 == 0 && Math.sqrt(Math.pow(myBullets[cnt].x - myGameEnemy[idx].x, 2))
-	                         + Math.pow(myBullets[cnt].y - myGameEnemy[idx].y, 2) < 50)
-	                    {   
-	                        myGameEnemy[idx] = null;
-	                        myBullets[cnt] = null;
-	                        nullEnemy[cnt] = myGameEnemy[idx]; // 사라진 적의 인덱스를 저장함
-	                        // 2개 정도 남았을 때 사라진 적만 생기도록 수정해야함!! + 다시 생길 때 두 번 생기는 것도 고쳐야함
-	                        /****************새로 추가한 부분 _ JHY _ 170417*********************/
-	                        if(myGameEnemy[idx]==null){ // 적이 총에 맞았을 때 카운트함.
-	                        	enemyCnt++;
-	                        	if(enemyCnt>=10){ // null값이고 적이 없을때 다시 생성한다.
-	                        		var timeEnd=setTimeout(function(){
-	                        		for(var cnt = 0 ; cnt < 10; cnt++){
-	                        			enemyCnt=0; //초기화
-	                        			// 구별을 위해 색을 바꿈
-	                        			 
-	                        			 myGameEnemy[cnt] = new enemy(30 ,30, color[choice], enemyPosX + 31*cnt, enemyPosY);
-	                        			 
-	                                } 
-	                        		
-	                        		},300);
-	                        	}
-	              	        }
-	                        
-	                       
-	                    }
+                    if(cnt%20 == 0 && Math.sqrt(Math.pow(myBullets[cnt].x - myGameEnemy[idx].x, 2))
+                         + Math.pow(myBullets[cnt].y - myGameEnemy[idx].y, 2) < 50)
+                    {
+                        myGameEnemy[idx] = null;
+                        myBullets[cnt] = null;
+
                     }
-                    
+                    }
                 }
-                
-                
-            }
-            
-             /*
-            if(enemyCnt<=7) {
-            	for(var cnt = 0 ; cnt < 10; cnt++){
-            		if(myGameEnemy[cnt]==null)
-                   		 myGameEnemy[cnt] = new enemy(30 ,30, "black", 225 + 31*cnt, 225);
-                } 
-            }
-            */ 
+            }  
         }
 
         var myGameArea = {
@@ -307,10 +209,5 @@
                 this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
             }
         }
-
-
-    </script>
-    
-</body>
-<h1></h1>
-</html>
+        
+window.onload = startGame();
