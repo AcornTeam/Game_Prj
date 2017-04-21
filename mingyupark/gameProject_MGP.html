@@ -18,13 +18,18 @@ $(document).ready(function(){
 	startGame();
 	
 });
+
 	var myGamePiece;
 	var myEnemyPiece;
+	var myLifeCount;
 
 	function startGame(){
 		myGameArea.start();
-		myGamePiece = new component(30, 30, "red", 300, 200);
+		myGamePiece = new component(30, 30, "red", 280, 350);
 		myEnemyPiece = new component(20, 20, "royalblue", 300, 50);
+		myLifeCount01 = new component(10, 10, "black", 15, 380);
+		myLifeCount02 = new component(10, 10, "black", 30, 380);
+		myLifeCount03 = new component(10, 10, "black", 45, 380);
 	}
 
 	var myGameArea = {
@@ -85,13 +90,26 @@ $(document).ready(function(){
 			}
 			return crash;
 		}
+		this.resetPos = function(){
+			this.x = 280;
+			this.y = 350;
+		}
+		this.decLife = function(){
+			this.x = -10;
+			this.y = -10;
+		}
 	}
 
 	function updateGameArea(){
 		if (myGamePiece.crashWith(myEnemyPiece)){
-			myGameArea.stop();
-			ctx.font = "50px Arial";
-			ctx.fillText("GAME OVER", 140, 210);
+			myGamePiece.resetPos();
+			myLifeCount03.decLife();
+				
+	//		myGamePiece.reStart();
+//			myGameArea.stop();
+//			ctx.font = "italic bold 70px Courier New";
+//			ctx.fillStyle = "goldenrod";
+//			ctx.fillText("GAME OVER", 100, 210);
 		}else{
 		myGameArea.clear();
 		myGamePiece.speedX = 0;
@@ -103,25 +121,24 @@ $(document).ready(function(){
 		myGamePiece.newPos();
 		myGamePiece.update();
 		myEnemyPiece.update();
+		myLifeCount01.update();
+		myLifeCount02.update();
+		myLifeCount03.update();
 		}
 	}
 
 /*	function moveup(){
 		myGamePiece.speedY -= 1;
 	}
-
 	function movedown(){
 		myGamePiece.speedY += 1;
 	}
-
 	function moveleft(){
 		myGamePiece.speedX -= 1;
 	}
-
 	function moveright(){
 		myGamePiece.speedX += 1;
 	}
-
 	function stopMove(){
 		myGamePiece.speedX = 0;
 		myGamePiece.speedY = 0;
