@@ -21,7 +21,8 @@
         var enemymyBullets=[];// 적 총알 객체 _YYJ
         var myGamePiece;
         var myGameEnemy = [];
-        var bulletFire= 20;
+        var item;
+        var bulletFire = 20;
         var score = 0;       
 
         function startGame() {
@@ -119,15 +120,14 @@
              }           
           }
 		//총알 생성
-        function creBullet(){
-            if(bulletIndex % 20 == 0){
+        function creBullet(bulletFire){
+            if(bulletIndex % bulletFire == 0){
                 myBullets[bulletIndex] = new bullet(myGamePiece.x, myGamePiece.y); 
             }
             bulletIndex++;      
         }
 
-        function item(){
-            this.type = type;
+        function Item(width, height, x, y){
             this.width = width;
             this.height = height;
             this.speedY = 2;
@@ -199,7 +199,7 @@
         }
 
          function updateGameArea(){
-	
+                        
              //                          주인공 객체 부분                           //
              myGameArea.clear();            
              myGamePiece.speedY = 0;
@@ -208,7 +208,7 @@
              if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = -7;}
              if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 7;}
              if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -7;}
-             if (myGameArea.keys && myGameArea.keys[32]) {creBullet();}
+             if (myGameArea.keys && myGameArea.keys[32]) {creBullet(bulletFire);}
              myGamePiece.newPosY();
              myGamePiece.newPosX();      
              if(myGamePiece.x > 670){
@@ -241,7 +241,7 @@
              }           
              try{
                  for(var idx = 0; idx < bulletIndex; idx++){
-                    if(idx%20 == 0 && myBullets[idx] != null){
+                    if(idx%bulletFire == 0 && myBullets[idx] != null){
                     myBullets[idx].speedY = 7;
                     myBullets[idx].fire();       
                     myBullets[idx].update(); 
@@ -301,9 +301,32 @@
             //                스코어보드 부분                   //
             myScore.text = "Score : " + score;
             myScore.update(); 
-
             //                아이템 생성로직                   //
-            
+            if( score % 5 == 0 && item == null){
+                item = new Item(30, 30, Math.random()*700, Math.random()*700); 
+                }
+            if(item != null){
+                if(item.x < 0){
+                    var temp = item.speedX;
+                    item.speedX = -temp;
+                }if(item.x > 700){
+                    var temp = item.speedX;
+                    item.speedX = -temp;
+                }if(item.y < 0){
+                    var temp = item.speedY;
+                    item.speedY = -temp;
+                }if(item.y >700){
+                    var temp = item.speedY;
+                    item.speedY = -temp;
+                }
+                item.update();
+                if(Math.abs(myGamePiece.x - item.x) < 20 && Math.abs(myGamePiece.y - item.y) < 20){
+                    item = null;
+                    //setInterval(5000, function(){bulletFire = 1});
+                    bulletFire = 2;
+                }
+            }
+
              /*
             if(enemyCnt<=7) {
             	for(var cnt = 0 ; cnt < 10; cnt++){
