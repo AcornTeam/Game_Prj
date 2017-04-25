@@ -21,15 +21,18 @@ $(document).ready(function(){
 
 	var myGamePiece;
 	var myEnemyPiece;
-	var myLifeCount;
+	var myLifeCount01;
+	var myLifeCount02;
+	var myLifeCount03;
+	var crashCount = 0;
 
 	function startGame(){
 		myGameArea.start();
 		myGamePiece = new component(30, 30, "red", 280, 350);
 		myEnemyPiece = new component(20, 20, "royalblue", 300, 50);
-		myLifeCount01 = new component(10, 10, "black", 15, 380);
-		myLifeCount02 = new component(10, 10, "black", 30, 380);
-		myLifeCount03 = new component(10, 10, "black", 45, 380);
+		myLifeCount01 = new lifeCount(10 ,10, "black", 15, 380); 	
+		myLifeCount02 = new lifeCount(10 ,10, "black", 30, 380); 	
+		myLifeCount03 = new lifeCount(10 ,10, "black", 45, 380); 	
 	}
 
 	var myGameArea = {
@@ -94,22 +97,47 @@ $(document).ready(function(){
 			this.x = 280;
 			this.y = 350;
 		}
-		this.decLife = function(){
-			this.x = -10;
-			this.y = -10;
+	}
+
+	function lifeCount(width, height, color, x, y){
+		this.width = width;
+		this.height = height;
+		this.x = x;
+		this.y = y;
+		this.update = function(){	
+			ctx = myGameArea.context;
+			ctx.fillStyle = color;
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		}
+		this.decLife01 = function(){
+			myLifeCount01 = null;
+		}
+		this.decLife02 = function(){
+			myLifeCount02 = null;
+		}
+		this.decLife03 = function(){
+			myLifeCount03 = null;
 		}
 	}
 
 	function updateGameArea(){
 		if (myGamePiece.crashWith(myEnemyPiece)){
-			myGamePiece.resetPos();
-			myLifeCount03.decLife();
-				
-	//		myGamePiece.reStart();
-//			myGameArea.stop();
-//			ctx.font = "italic bold 70px Courier New";
-//			ctx.fillStyle = "goldenrod";
-//			ctx.fillText("GAME OVER", 100, 210);
+			crashCount += 1;
+			if(crashCount < 2){
+				myGamePiece.resetPos();
+				myLifeCount03.decLife03();
+			}else if(crashCount < 3){
+				myGamePiece.resetPos();
+				myLifeCount02.decLife02();
+			}else if(crashCount < 4){
+				myGamePiece.resetPos();
+				myLifeCount01.decLife01();
+			}else{
+				myGameArea.stop();
+				ctx.font = "italic bold 70px Courier New";
+				ctx.fillStyle = "goldenrod";
+				ctx.fillText("GAME OVER", 100, 210);
+			}
 		}else{
 		myGameArea.clear();
 		myGamePiece.speedX = 0;
