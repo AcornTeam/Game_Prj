@@ -127,9 +127,15 @@
             } 
             //회전시킴_JHY 
             this.newPos = function() {
-                this.angle += this.moveAngle * Math.PI / 180;
+                this.angle += this.moveAngle * Math.PI / 90;
                 this.x += this.speed * Math.sin(this.angle);
                 this.y -= this.speed * Math.cos(this.angle);
+            }
+            /*반대로 회전 JHY*/
+            this.newPos2 = function() {
+                this.angle += this.moveAngle * Math.PI / 90;
+                this.x -= this.speed * Math.sin(this.angle);
+                this.y += this.speed * Math.cos(this.angle);
             }
          }
 
@@ -176,7 +182,11 @@
              myGamePiece.update();
              for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){
                  if(myGameEnemy[cnt] != null){
-                	myGameEnemy[cnt].newPos();
+                	if(cnt>=(myGameEnemy.length/2))
+                		myGameEnemy[cnt].newPos2();
+                	else 
+                		myGameEnemy[cnt].newPos();
+
                     myGameEnemy[cnt].update();
                  }               
              }
