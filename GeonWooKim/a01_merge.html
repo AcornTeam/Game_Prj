@@ -21,13 +21,13 @@
         var enemymyBullets=[];// 적 총알 객체 _YYJ
         var myGamePiece;
         var myGameEnemy = [];
-        var score = 0;
-        
+        var bulletFire= 20;
+        var score = 0;       
+
         function startGame() {
-            myGamePiece = new component(30, 30, "red", 350, 500);
-            
+            myGamePiece = new component(30, 30, "red", 350, 500);         
             for(var cnt = 0 ; cnt < 10; cnt++){
-                myGameEnemy[cnt] = new enemy(30 ,30, "black", 225 + 31*cnt, 225);
+                myGameEnemy[cnt] = new enemy(30 ,30, "black", Math.random()*700, Math.random()*700 ); //25 + 31*cnt, 100
             }   
             myScore = new scoreboard("18px", "Sans", "black", 600, 40);    
             myGameArea.start();      
@@ -126,15 +126,40 @@
             bulletIndex++;      
         }
 
+        function item(){
+            this.type = type;
+            this.width = width;
+            this.height = height;
+            this.speedY = 2;
+            this.speedX = 2;
+            this.x = x;
+            this.y = y;
+            this.newPosY = function(){
+                this.y -= this.speedY;
+            }   
+            this.newPosX = function(){
+                this.x += this.speedX;
+            }
+            this.update = function(){
+                ctx = myGameArea.context;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.fillStyle = "Green";
+                ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+                ctx.restore();
+            } 
+        }
+
          function enemy(width, height, color, x, y, type){
             this.type = type;
             this.width = width;
             this.height = height;
             //this.speedY = 0;
            // this.speedX = 0;
-            this.speed = 2;
-            this.angle = 3;
-            this.moveAngle = 0.5;
+            this.speed = 0.5;
+            this.speedX = 0.7;
+            this.angle = 2;
+            this.moveAngle = 0.1;
             this.x = x;
             this.y = y;
             /*
@@ -155,8 +180,8 @@
             //회전시킴_JHY 
             this.newPos = function() {
                 this.angle += this.moveAngle * Math.PI / 180;
-                this.x += this.speed * Math.sin(this.angle);
-                this.y -= this.speed * Math.cos(this.angle);
+                this.x +=  Math.sin(this.angle*50) * Math.sin(this.angle*50) * Math.sin(this.angle*50) * 20 ;
+                this.y += Math.log(this.angle);
             }
          }
 
@@ -175,19 +200,29 @@
 
          function updateGameArea(){
 	
-             myGameArea.clear();
-             
+             //                          주인공 객체 부분                           //
+             myGameArea.clear();            
              myGamePiece.speedY = 0;
              myGamePiece.speedX = 0;
-
              if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speedY = 7;}
              if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = -7;}
              if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 7;}
              if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -7;}
              if (myGameArea.keys && myGameArea.keys[32]) {creBullet();}
              myGamePiece.newPosY();
-             myGamePiece.newPosX();         
-             myGamePiece.update();   
+             myGamePiece.newPosX();      
+             if(myGamePiece.x > 670){
+                myGamePiece.x = 670;
+             } if (myGamePiece.x <30){
+                myGamePiece.x = 30;
+             } if (myGamePiece.y > 680){
+                myGamePiece.y = 680;
+             } if (myGamePiece.y < 10){
+                myGamePiece.y = 10;
+             }
+             myGamePiece.update(); 
+
+            //                          적군 객체 부분                           //
              for(var cnt = 0 ; cnt < myGameEnemy.length; cnt++){
                  if(myGameEnemy[cnt] != null){
                 	myGameEnemy[cnt].newPos();
@@ -197,6 +232,9 @@
                          enemybulletIndex++;
                      }
                      enemybulletIndex++; 
+                     if (myGameEnemy[cnt].y > 700){
+                        myGameEnemy[cnt].y = 0;
+                    }
                     myGameEnemy[cnt].update();
                     myGameEnemy[cnt].update();
                  }               
@@ -205,17 +243,23 @@
                  for(var idx = 0; idx < bulletIndex; idx++){
                     if(idx%20 == 0 && myBullets[idx] != null){
                     myBullets[idx].speedY = 7;
-                    myBullets[idx].fire();              
+                    myBullets[idx].fire();       
                     myBullets[idx].update(); 
+                    if (myBullets[idx].y < -50){
+                        myBullets[idx] = null;
+                    }                     
                     }
                  }
                 for(var idxz = 0; idxz < enemybulletIndex; idxz++){
                      if(idxz%20 == 0 && enemymyBullets[idxz] != null){
                     	 enemymyBullets[idxz].speedY = 7;
                     	 enemymyBullets[idxz].fire();              
-                    	 enemymyBullets[idxz].update();  
+                    	 enemymyBullets[idxz].update(); 
+                        if (enemymyBullets[idxz].y > 750){
+                        enemymyBullets[idxz] = null;
+                        }        
                      }
-                    }
+                }
              }finally{}   
                           
              var color=["red","orange","Yellow","blue","black","white","tomato","pink"];
@@ -253,8 +297,13 @@
                     }
                 }
             }
+
+            //                스코어보드 부분                   //
             myScore.text = "Score : " + score;
             myScore.update(); 
+
+            //                아이템 생성로직                   //
+            
              /*
             if(enemyCnt<=7) {
             	for(var cnt = 0 ; cnt < 10; cnt++){
@@ -263,6 +312,7 @@
                 } 
             }
             */ 
+            
         }
 
         var myGameArea = {
