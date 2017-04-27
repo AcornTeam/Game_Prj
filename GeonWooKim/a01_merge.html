@@ -5,14 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HTML5 Game Example</title>
     <style>
+        body{
+            width: 700px;
+            height: 700px;
+            padding: 1rem;
+        }
         canvas {
             border : 1px solid #d3d3d3;
             background-color : #f1f1f1;
         }
     </style>
 </head>
-<body onload = "startGame()">
-    <script>
+<body> 
+    <script src="script.js"></script>
+    <!--<script>
    	    var enemyCnt=0; // 적이 사라진 수를 카운트함 _JHY
    	    var nullEnemy= []; //사라진 적의 인덱스를 저장할 배열 _JHY
         var bulletIndex = 0;
@@ -23,6 +29,9 @@
         var myGameEnemy = [];
         var item;
         var bulletFire = 20;
+        var now = new Date();
+        var itemStart;
+        var itemEnd;
         var score = 0;       
 
         function startGame() {
@@ -220,6 +229,12 @@
              } if (myGamePiece.y < 10){
                 myGamePiece.y = 10;
              }
+             if(bulletFire == 2){
+                 itemEnd = now.getSeconds();
+                 if(Math.abs(itemEnd - itemStart) > 2){
+                     bulletFire = 20;
+                 }
+             }
              myGamePiece.update(); 
 
             //                          적군 객체 부분                           //
@@ -308,22 +323,25 @@
             if(item != null){
                 if(item.x < 0){
                     var temp = item.speedX;
-                    item.speedX = -temp;
+                    item.speedX = -1 * temp;
                 }if(item.x > 700){
                     var temp = item.speedX;
-                    item.speedX = -temp;
+                    item.speedX = -1 *temp;
                 }if(item.y < 0){
                     var temp = item.speedY;
-                    item.speedY = -temp;
+                    item.speedY = -1 *temp;
                 }if(item.y >700){
                     var temp = item.speedY;
-                    item.speedY = -temp;
+                    item.speedY = -1 *temp;
                 }
+                item.newPosX();
+                item.newPosY();
                 item.update();
                 if(Math.abs(myGamePiece.x - item.x) < 20 && Math.abs(myGamePiece.y - item.y) < 20){
                     item = null;
                     //setInterval(5000, function(){bulletFire = 1});
                     bulletFire = 2;
+                    itemStart = now.getSeconds();
                 }
             }
 
@@ -366,7 +384,7 @@
         }
 
 
-    </script>
+    </script>-->
     
 </body>
 <h1></h1>
